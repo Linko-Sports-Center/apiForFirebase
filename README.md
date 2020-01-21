@@ -1,4 +1,4 @@
-# ugym-api-for-firebase
+# apiForFirebase
 APIs <br>
   * API:00 ?API=00&UserId=Uxxx..xxx 
     * 檢查會員 成功回應 "API:00 會員已存在" 或 "API:00 會員不存在" 
@@ -15,7 +15,7 @@ APIs <br>
   * API:12 ?API=12
     * 讀取 courseMember, JSON.stringify(courseMember), 失敗回應 "API:12 courseHistory 讀取失敗"
     <br>
-  * API:20 ?API=20&UserName&CourseId
+  * API:20 ?API=20&UserName&CourseId&UserId&PhoneNumber
     * 報名寫入 courseMember with  ["courseID", ["userName", "未繳費", "未簽到"]], 成功回應 "API:20 會員報名成功" 或 "API:20 會員報名失敗"
     <br>
   * API:30 ?API=30
@@ -27,5 +27,5 @@ APIs <br>
   * API:32 ?API=32
     * 讀取 couponMember, JSON.stringify(couponMember), 失敗回應 "API:32 couponHistory 讀取失敗"
     <br>
-  * API:40 ?API=40&UserName&CouponId
+  * API:40 ?API=40&UserName&CouponId&UserId&PhoneNumber
     * 報名寫入 couponMember with  ["courseID", ["userName", "已使用", "未確認"]], 成功回應 "API:40 優惠券使用成功" 或 "API:40 優惠券使用失敗"
