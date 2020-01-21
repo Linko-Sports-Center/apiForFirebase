@@ -1,4 +1,6 @@
 # apiForFirebase
+原本是在 SABG 上的 ugym-api-for-firebase, copy 到 Linko-Sports-Center 做 beta 測試，然後再 fork 回 SABG 做開發測試
+
 APIs <br>
   * API:00 ?API=00&UserId=Uxxx..xxx 
     * 檢查會員 成功回應 "API:00 會員已存在" 或 "API:00 會員不存在" 
