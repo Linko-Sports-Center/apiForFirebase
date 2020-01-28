@@ -31,3 +31,6 @@ APIs <br>
     <br>
   * API:40 ?API=40&UserName&CouponId&UserId&PhoneNumber
     * 報名寫入 couponMember with  ["courseID", ["userName", "已使用", "未確認"]], 成功回應 "API:40 優惠券使用成功" 或 "API:40 優惠券使用失敗"
+  * API:50 ?API=50&UserId&ExerciseId&DateStart&DateEnd
+    *取得 UserId 在 DateStart 到 DateEnd 其間 ExerciseId 的總運動量
+       *ExerciseId: 00:calories, 01:jogging, 02:biking, 03:Rowing, 04:Weights
