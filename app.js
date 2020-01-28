@@ -1,6 +1,7 @@
-var version ="V.51";
+var version ="V.6";
 
 var express = require('express');
+var request = require("request");
 var app = express();
 var port = process.env.PORT || 5000
 
@@ -48,6 +49,9 @@ app.use(function (req, res, next) {
 //
 //   API:40 ?API=40&UserName&CouponId&UserId&PhoneNumber
 //          報名寫入 couponMember with  ["couponID", ["userName", "已使用", "未確認", UserId, PhoneNumber]], 成功回應 "API:40 優惠券使用成功" 或 "API:40 優惠券使用失敗"
+//   API:50 ?API=50&UserId&ExerciseId&DataType&DateStart&DateEnd
+//          取得 UserId 在 DateStart 到 DateEnd 其間 ExerciseId 的 DataType 總運動量
+//          ExerciseId: 00:jogging, 01:biking, 02:Rowing, 03:Weights          
 
 app.get('/', function (req, res) {
   //console.log(req.query);
@@ -107,7 +111,11 @@ app.get('/', function (req, res) {
     case "40":
       console.log("呼叫 API:40 使用寫入 couponMember");
       writeCouponMember();  
-      break;      
+      break;  
+    case "50":
+      console.log("呼叫 API:50 取得 UserId 運動資料");
+      getExerciseData();  
+      break;       
     default:
       console.log("呼叫 未知API:"+inputParam.API);
       response.send("呼叫 未知API:"+inputParam.API);
@@ -214,6 +222,7 @@ function addMember() {
 //  '新竹市',
 //  'Tony',// LineId
 //  'www.xxx.com', // Line URL
+//  '175cm'
 //]
 function addAndWriteToFirebase() {
   var dataToAdd =[];
@@ -588,3 +597,63 @@ function writeCouponMember() {
   });    
 }
 // 優惠券管理 APIs END=================================================================
+
+// 挑戰賽管理 APIs ====================================================================
+//   API:50 ?API=50&UserId&ExerciseId&DataType&DateStart&DateEnd
+//          取得 UserId 在 DateStart 到 DateEnd 其間 ExerciseId 的 DataType 總運動量
+//          ExerciseId: 00:jogging, 01:biking, 02:Rowing, 03:Weights 
+
+function getExerciseData() {
+  // 檢查 UserId, ExerciseId, DataType, DateStart, DateEnd
+//  var errMsg = "";
+//  if ( inputParam.UserId == undefined     ||
+//       inputParam.ExerciseId == undefined ||
+//       inputParam.DataType == undefined ||  
+//       inputParam.DateStart == undefined  ||
+//       inputParam.DateEnd == undefined )
+//  {
+//    console.log("API:50 參數錯誤"); 
+//    response.send("API:50 參數錯誤");
+//    return 1;
+//  }  
+  var UserId = "oxyoO1eNcR300-DRcfU4vrhyTigo";
+  var ExerciseId = "BikingTrainingResult";
+  var DataType = "distance";
+  var DateStart = "2018-02-01";
+  var DateEnd = "2018-03-02";
+
+  // API to uGym with SQL command
+  // SQL command API url 
+  url = "http://ugym3dbiking.azurewebsites.net/api/SQL_CmdReadCols?Code=debug123";  
+
+  var requestData = {
+    "sqlCmd": "SELECT SUM("       + DataType + 
+              " ) AS A1 FROM "    + ExerciseId + 
+              " WHERE userId = '" + UserId +
+              "' AND　(trainingDate BETWEEN '" + DateStart + 
+              "' AND '" + DateEnd +
+              "') ",
+    "sqlCols": [
+              "A1",
+      ]
+  }
+
+  // fire request
+  request({
+    url: url,
+    method: "POST",
+    json: requestData
+  }, function (error, res, body) {
+    if (!error && res.statusCode === 200) {
+      console.log(body);
+      response.send("API:50 取得"+JSON.stringify(body));
+    } else {
+
+      console.log("error: " + error)
+      console.log("res.statusCode: " + response.statusCode)
+      console.log("res.statusText: " + response.statusText)
+    }
+  })  
+  
+}
+// 挑戰賽管理 APIs END=================================================================
