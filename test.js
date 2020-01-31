@@ -1,7 +1,7 @@
 var request = require("request");
 
 // jogging API url
-// url = "http://ugym3dbiking.azurewebsites.net/api/SQL_JoggingTrainingResult?Code=debug123"
+//url = "http://ugym3dbiking.azurewebsites.net/api/SQL_JoggingTrainingResult?Code=debug123"
 
 // biking API url
 //url = "http://ugym3dbiking.azurewebsites.net/api/SQL_BikingTrainingResult?Code=debug123";
@@ -13,7 +13,7 @@ url = "http://ugym3dbiking.azurewebsites.net/api/SQL_CmdReadCols?Code=debug123"
 
 //var requestData = {
 //
-//  "sqlCmd": "SELECT SUM(distance) AS A1, AVG(distance) AS A2 FROM BikingTrainingResult WHERE userId = 'oxyoO1eNcR300-DRcfU4vrhyTigo' AND　(trainingDate BETWEEN '2018-02-01' AND '2018-03-02') ",
+//  "sqlCmd": "SELECT SUM(distance) AS A1, AVG(distance) AS A2 FROM BikingTrainingResult WHERE userId = 'U527960def4078372836e9ec7434ac7a0' AND　(trainingDate BETWEEN '2019-03-10' AND '2019-03-13') ",
 //
 //  "sqlCols": [
 //		"A1",
@@ -23,10 +23,20 @@ url = "http://ugym3dbiking.azurewebsites.net/api/SQL_CmdReadCols?Code=debug123"
 
 var requestData = {
 
-  "sqlCmd": "SELECT SUM(distance) AS A1 FROM BikingTrainingResult WHERE userId = 'oxyoO1eNcR300-DRcfU4vrhyTigo' AND　(trainingDate BETWEEN '2018-02-01' AND '2018-03-02') ",
+  "sqlCmd": "SELECT SUM(distance) AS A1, AVG(distance) AS A2 FROM JoggingTrainingResult WHERE userId = 'U722be0c9c9d36e011c0e556bd2047819' AND　(trainingDate BETWEEN '2020-01-28' AND '2020-01-31')",
 
   "sqlCols": [
 		"A1",
+		"A2"
+	]
+}
+
+var requestData = {
+  "sqlCmd": "SELECT SUM(distance) AS A1, AVG(distance) AS A2 FROM JoggingTrainingResult WHERE userId='U722be0c9c9d36e011c0e556bd2047819' AND site='LINKOU' AND　(trainingDate BETWEEN '2019-10-29' AND '2020-01-31')",
+
+  "sqlCols": [
+		"A1",
+		"A2"
 	]
 }
 

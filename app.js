@@ -599,45 +599,71 @@ function writeCouponMember() {
 // 優惠券管理 APIs END=================================================================
 
 // 挑戰賽管理 APIs ====================================================================
-//   API:50 ?API=50&UserId&ExerciseId&DataType&DateStart&DateEnd
-//          取得 UserId 在 DateStart 到 DateEnd 其間 ExerciseId 的 DataType 總運動量
+//   API:50 ?API=50&UserId&SiteId&ExerciseId&DataType&DateStart&DateEnd
+//          取得 UserId 於 SiteId 在 DateStart 到 DateEnd 其間 ExerciseId 的 DataType 總運動量
 //          ExerciseId: 00:jogging, 01:biking, 02:Rowing, 03:Weights 
+
+// ?API=50&UserId=U722be0c9c9d36e011c0e556bd2047819&SiteId=LINKOU&ExerciseId=00&DataType=distance&DateStart=2019-10-01&DateEnd=2020-01-31 
 
 function getExerciseData() {
   // 檢查 UserId, ExerciseId, DataType, DateStart, DateEnd
-//  var errMsg = "";
-//  if ( inputParam.UserId == undefined     ||
-//       inputParam.ExerciseId == undefined ||
-//       inputParam.DataType == undefined ||  
-//       inputParam.DateStart == undefined  ||
-//       inputParam.DateEnd == undefined )
-//  {
-//    console.log("API:50 參數錯誤"); 
-//    response.send("API:50 參數錯誤");
-//    return 1;
-//  }  
-  var UserId = "oxyoO1eNcR300-DRcfU4vrhyTigo";
-  var ExerciseId = "BikingTrainingResult";
-  var DataType = "distance";
-  var DateStart = "2018-02-01";
-  var DateEnd = "2018-03-02";
+  //console.log(inputParam);
+  
+  var errMsg = "";
+  if ( 
+       inputParam.UserId == undefined     ||
+       inputParam.SiteId == undefined     ||  
+       inputParam.ExerciseId == undefined ||
+       inputParam.DataType == undefined   ||  
+       inputParam.DateStart == undefined  ||
+       inputParam.DateEnd == undefined 
+    )
+  {
+    console.log("API:50 參數錯誤"); 
+    response.send("API:50 參數錯誤");
+    return 1;
+  }  
+  
+  var exerciseId;
+  switch (inputParam.ExerciseId) {
+    case "00": 
+      exerciseId = "JoggingTrainingResult";
+      break;
+    case "01":
+      exerciseId = "BikingTrainingResult";
+      break
+    default:
+      console.log("ExerciseId is unkonown");
+      
+  }
+
+//  inputParam.UserId =     "U722be0c9c9d36e011c0e556bd2047819";
+//  inputParam.SiteId =     "LINKOU";
+//  inputParam.ExerciseId = "JoggingTrainingResult";
+//  inputParam.DataType =   "distance";
+//  inputParam.DateStart =  "2019-10-01";
+//  inputParam.DateEnd =    "2020-01-31";
 
   // API to uGym with SQL command
   // SQL command API url 
   url = "http://ugym3dbiking.azurewebsites.net/api/SQL_CmdReadCols?Code=debug123";  
 
+  
   var requestData = {
-    "sqlCmd": "SELECT SUM("       + DataType + 
-              " ) AS A1 FROM "    + ExerciseId + 
-              " WHERE userId = '" + UserId +
-              "' AND　(trainingDate BETWEEN '" + DateStart + 
-              "' AND '" + DateEnd +
+    "sqlCmd": "SELECT SUM("       + inputParam.DataType + 
+              " ) AS A1 FROM "    + exerciseId + 
+              " WHERE userId = '" + inputParam.UserId +
+              "' AND　site = '"   + inputParam.SiteId +     
+              "' AND　(trainingDate BETWEEN '" + inputParam.DateStart + 
+              "' AND '" + inputParam.DateEnd +
               "') ",
     "sqlCols": [
               "A1",
       ]
   }
 
+  //console.log(requestData);
+  
   // fire request
   request({
     url: url,
