@@ -115,7 +115,23 @@ app.get('/', function (req, res) {
     case "50":
       console.log("呼叫 API:50 取得 UserId 運動資料");
       getExerciseData();  
-      break;       
+      break;  
+    case "51":
+      console.log("呼叫 API:51 讀取 挑戰賽/現在挑戰賽 --> challengeData");
+      readChallengeData();  
+      break; 
+    case "52":
+      console.log("呼叫 API:52 讀取 挑戰賽/過去挑戰賽 --> challengeHistory");
+      readChallengeHistory();  
+      break;  
+    case "53":
+      console.log("呼叫 API:53 讀取 挑戰賽管理/挑戰賽會員 --> challengeMember");
+      readChallengeMember();  
+      break;  
+    case "60":
+      console.log("呼叫 API:60 使用寫入 challengeMember");
+      writeChallengeMember();  
+      break;      
     default:
       console.log("呼叫 未知API:"+inputParam.API);
       response.send("呼叫 未知API:"+inputParam.API);
@@ -674,12 +690,158 @@ function getExerciseData() {
       console.log(body);
       response.send("API:50 取得"+JSON.stringify(body));
     } else {
-
       console.log("error: " + error)
       console.log("res.statusCode: " + response.statusCode)
       console.log("res.statusText: " + response.statusText)
+      response.send("API:50 失敗"+JSON.stringify(body));
     }
   })  
   
+}
+
+function readChallengeData(){
+  // 讀取目前 ChallengeData
+  database.ref("users/林口運動中心/挑戰賽").once("value").then(function (snapshot) {
+    //console.log(snapshot.val());
+    console.log("資料庫挑戰賽讀取完成");
+    var result = snapshot.val();
+    //console.log(result);
+    try {
+      response.send(result.現在挑戰賽);     
+    } catch (e) {
+      console.log("API:51 ChallengeData 讀取失敗");
+      response.send("API:51 ChallengeData 讀取失敗");      
+      return 0;
+    }
+    console.log("API:51 ChallengeData 讀取成功");   
+  });  
+}
+
+function readChallengeHistory(){
+  // 讀取目前 challengeData
+  database.ref("users/林口運動中心/挑戰賽").once("value").then(function (snapshot) {
+    //console.log(snapshot.val());
+    console.log("資料庫挑戰賽讀取完成");
+    var result = snapshot.val();
+    //console.log(result);
+    try {
+      response.send(result.過去挑戰賽);     
+    } catch (e) {
+      console.log("API:52 challengeHistory 讀取失敗");
+      response.send("API:52 challengeHistory 讀取失敗");      
+      return 0;
+    }
+    console.log("API:52 challengeHistory 讀取成功");   
+  });  
+}
+
+function readChallengeMember(){
+  // 讀取目前 challengeMember
+  database.ref("users/林口運動中心/挑戰賽管理").once("value").then(function (snapshot) {
+    //console.log(snapshot.val());
+    console.log("資料庫挑戰賽管理讀取完成");
+    var result = snapshot.val();
+    //console.log(result);
+    try {      
+      response.send(result.挑戰賽會員);
+    } catch (e) {
+      console.log("API:53 challengeMember 讀取失敗");
+      response.send("API:53 challengeMember 讀取失敗");      
+      return 0;
+    }
+    console.log("API:53 challengeMember 讀取成功");
+       
+  });  
+}
+
+function writeChallengeMember() {
+// ?API=60&UserName=小李&ChallengeId=T0003&UserId=U12345678901234567890123456789012&PhoneNumber=0917888999  
+  // 檢查 UserName, ChallengeId, UserId, PhoneNumber
+  var errMsg = "";
+  if ( inputParam.UserName == undefined ||
+       inputParam.ChallengeId == undefined ||
+       inputParam.UserId == undefined   ||
+       inputParam.PhoneNumber == undefined )
+  {
+    console.log("API:60 參數錯誤"); 
+    response.send("API:60 參數錯誤");
+    return 1;
+  }   
+  // ====================================================================================
+  
+  // 讀取目前 couponMember
+  database.ref("users/林口運動中心/挑戰賽管理").once("value").then(function (snapshot) {
+    console.log("API:60 challengeMember 讀取成功");
+    var result = snapshot.val();
+    //console.log(result);
+    try {      
+      challengeMember=[];
+      challengeMember = JSON.parse(result.挑戰賽會員);
+      //console.log(couponMember);   
+    } catch (e) {
+      console.log("API:60 challengeMember 讀取失敗");
+      response.send("API:60 challengeMember 讀取失敗");      
+      return 0;
+    }
+    
+    var challengeIndex=-1;
+    var userInChallenge = false;
+    challengeMember.forEach(function(challenge, index, array){
+      if (challenge[0]==inputParam.ChallengeId){
+        //console.log("challenge matched:", challenge[0]);
+        challengeIndex = index;
+        if (challenge.length>1) {
+          for (var i=1; i< challenge.length; i++) {
+            //console.log(i, challenge[i]);
+            if (challenge[i][4]== inputParam.PhoneNumber){
+              //console.log(inputParam.UserName, "已經報名過 ", inputParam.ChallengeId);
+              //response.send("API:60 "+inputParam.UserName+" 已經報名過 "+inputParam.ChallengeId);   
+              userInchallenge = true;
+              break;
+            }
+          }
+        }
+      }
+    });
+
+    if (userInChallenge) {
+      console.log("API:60", inputParam.UserName, "已參加過 ", inputParam.ChallengeId);
+      response.send("API:60 "+inputParam.UserName+" 已參加過 "+inputParam.ChallengeId); 
+      return 0;
+    };
+    
+    console.log(challengeIndex);
+    // ChallengeId 還沒被 UserName 使用過
+    // push to challengeMember    
+
+    // Conver local date to format "YYYY-MM-DD"
+    var nowDate = new Date();
+    var localDateStr = nowDate.toLocaleDateString();
+    var formatDateStr = localDateStr.replace(/\//g, "-");
+    var dateArr = formatDateStr.split("-");
+    if (dateArr[1].length == 1) dateArr[1]="0"+dateArr[1]; //若是個位數，前面補 0
+    if (dateArr[2].length == 1) dateArr[2]="0"+dateArr[2]; //若是個位數，前面補 0   
+    var dateStr = dateArr[0] + "-" + dateArr[1] + "-" + dateArr[2];   
+    //console.log(dateStr);
+    // End of Conver local date to format "YYYY-MM-DD"     
+    
+    challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "未繳費", inputParam.UserId, inputParam.PhoneNumber]);
+    //console.log(challengeMember);
+
+    // Write to Database
+    database.ref('users/林口運動中心/挑戰賽管理').set({
+      挑戰賽會員: JSON.stringify(challengeMember),
+    }, function (error) {
+      if (error) {
+        console.log("API:60 會員參加挑戰賽失敗");
+        response.send("API:60 會員參加挑戰賽失敗");      
+      } else {
+        console.log("API:60 會員參加挑戰賽成功");
+        response.send("API:60 會員參加挑戰賽成功");
+      }
+
+    });
+    
+  });    
 }
 // 挑戰賽管理 APIs END=================================================================
