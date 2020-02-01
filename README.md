@@ -35,3 +35,16 @@ APIs <br>
   * API:50 ?API=50&UserId&SiteId&ExerciseId&DataType&DateStart&DateEnd
     * 取得 UserId 在 DateStart 到 DateEnd 其間 ExerciseId 的 DataType 總運動量
       * ExerciseId: 00:jogging, 01:biking, 02:Rowing, 03:Weights
+    <br>
+  * API:51 ?API=51 ==> read 挑戰賽/現在挑戰賽 --> challengeData
+    * 讀取 challengeData, 成功回應 JSON.stringify(couponData), 失敗回應 "API:51 challengeData 讀取失敗"
+    <br>
+  * API:52 ?API=52 ==> read 挑戰賽/過去挑戰賽 --> challengeHistory
+    * 讀取 challengeHistory, 成功回應 JSON.stringify(challengeHistory), 失敗回應 "API:52 challengeHistory 讀取失敗"
+    <br>  
+  * API:53 ?API=53 ==> read 挑戰賽管理/挑戰賽會員 --> challengeMember 
+    * 讀取 challengeMember, 成功回應 JSON.stringify(challengeMember), 失敗回應 "API:53 challengeMember 讀取失敗"
+    <br> 
+  * API:60 ?API=60&UserName&ChallengeId&UserId&PhoneNumber
+    * 報名寫入 challengeMember with  ["challengeId", ["userName", "日期 已參加", "未繳費"]], 成功回應 "API:60 挑戰賽參加成功" 或 "API:60 挑戰賽參加失敗"
+    <br>    
