@@ -20,6 +20,9 @@ APIs <br>
   * API:20 ?API=20&UserName&CourseId&UserId&PhoneNumber
     * 報名寫入 courseMember with  ["courseID", ["userName", "未繳費", "未簽到"]], 成功回應 "API:20 會員報名成功" 或 "API:20 會員報名失敗"
     <br>
+  * API:21 ?API=21&UserName&CourseId&UserId&PhoneNumber
+    * 更新簽到欄 courseMember with  ["courseID", ["userName", "未繳費", "已簽到", UserId, PhoneNumber]], 成功回應 "API:21 會員簽到成功" 或 "API:21 會員簽到失敗"
+    <br>
   * API:30 ?API=30
     * 讀取 couponData, 成功回應 JSON.stringify(couponData), 失敗回應 "API:30 couponData 讀取失敗"
     <br>

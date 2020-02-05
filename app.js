@@ -40,6 +40,9 @@ app.use(function (req, res, next) {
 //   API:20 ?API=20&UserName&CourseId&UserId&PhoneNumber
 //          報名寫入 courseMember with  ["courseID", ["userName", "未繳費", "未簽到", UserId, PhoneNumber]], 成功回應 "API:20 會員報名成功" 或 "API:20 會員報名失敗"
 //
+//   API:21 ?API=21&UserName&CourseId&UserId&PhoneNumber
+//          更新簽到欄 courseMember with  ["courseID", ["userName", "未繳費", "已簽到", UserId, PhoneNumber]], 成功回應 "API:21 會員簽到成功" 或 "API:21 會員簽到失敗"
+//
 //   API:30 ?API=30
 //          讀取 couponData, 成功回應 JSON.stringify(couponData), 失敗回應 "API:30 couponData 讀取失敗"
 //   API:31 ?API=31
@@ -95,7 +98,11 @@ app.get('/', function (req, res) {
     case "20":
       console.log("呼叫 API:20 報名寫入 courseMember");
       writeCourseMember();  
-      break;  
+      break; 
+    case "21":
+      console.log("呼叫 API:21 簽到寫入 courseMember");
+      signinCourseMember();  
+      break;       
     case "30":
       console.log("呼叫 API:30 讀取 couponData");
       readCouponData();  
@@ -379,8 +386,25 @@ function writeCourseMember() {
   更新課程及報名人數();
 }
 
-async function 更新課程及報名人數(){
+//?API=21&UserName=小白&CourseId=U0001&UserId=U001&PhoneNumber=09XXXXX222
+function signinCourseMember() {
+  
+  // 檢查 UserName, CourseId, UserId, PhoneNumber
+  var errMsg = "";
+  if ( inputParam.UserName == undefined ||
+       inputParam.CourseId == undefined ||
+       inputParam.UserId == undefined   ||
+       inputParam.PhoneNumber == undefined )
+  {
+    console.log("API:21 參數錯誤"); 
+    response.send("API:21 參數錯誤");
+    return 1;
+  }  
 
+  更新課程會員報名狀態();
+}
+
+async function 更新課程及報名人數(){
   var databaseRef = database.ref("users/林口運動中心/課程管理");
   try {
     const snapshot = await databaseRef.once('value');
@@ -470,6 +494,72 @@ async function 更新課程及報名人數(){
   }  
    
   response.send("API:20 會員報名成功");
+}
+
+async function 更新課程會員報名狀態(){
+  var databaseRef = database.ref("users/林口運動中心/課程管理");
+  try {
+    const snapshot = await databaseRef.once('value');
+    const result = snapshot.val();
+    courseMember = JSON.parse(result.課程會員);   
+  } catch (e) {
+    console.log("API:20 courseMember 讀取失敗");
+    response.send("API:20 courseMember 讀取失敗"); 
+    return 1;
+  }  
+  
+  // 檢查 user 是否已簽到
+  var courseIndex=-1;
+  var memberIndex=-1;
+  var userInCourse = false;
+  var userSigned = false;
+  courseMember.forEach(function(course, index, array){
+    if (course[0]==inputParam.CourseId ){
+      //console.log("Course matched:", course[0]);
+      courseIndex = index;
+      if (course.length>1) {
+        for (var i=1; i< course.length; i++) {
+          //console.log(i, course[i][2]);
+          if (course[i][4]== inputParam.PhoneNumber){  
+            userInCourse = true;
+            memberIndex  = i;
+          }
+          if (course[i][2]== "已簽到"){ 
+            userSigned = true;
+          }
+          
+          if (userInCourse == true) break;
+        }
+      }
+    }
+  });
+  // 結束: 檢查是否已報名  
+   
+  // 已經簽名過
+  if (userInCourse && userSigned) {
+    console.log(inputParam.UserName, "已經簽到過 ", inputParam.CourseId);
+    response.send("API:21 "+inputParam.UserName+" 已經簽到過 "+inputParam.CourseId); 
+    return 1;
+  };
+  
+  // CourseId 還沒被 UserPhoneNumber 簽名過
+  courseMember[courseIndex][memberIndex][2]= "已簽到";
+  console.log(courseMember[courseIndex][memberIndex]);
+  
+
+  //測試時，先不要寫入資料庫
+  databaseRef = database.ref("users/林口運動中心/課程管理");
+  try {
+    const snapshot = await databaseRef.set({
+      課程會員: JSON.stringify(courseMember),
+    }); 
+  } catch (e) {
+    console.log("API:20 courseMember 寫入失敗");
+    response.send("API:20 courseMember 寫入失敗"); 
+    return 1;
+  }
+     
+  response.send("API:21 會員簽名成功");
 }
 
 // 課程管理 APIs END=================================================================
