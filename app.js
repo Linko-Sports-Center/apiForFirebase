@@ -928,18 +928,18 @@ function writeChallengeMember() {
     console.log(challengeMember);
 
     // Write to Database
-//    database.ref('users/林口運動中心/挑戰賽管理').set({
-//      挑戰賽會員: JSON.stringify(challengeMember),
-//    }, function (error) {
-//      if (error) {
-//        console.log("API:60 會員參加挑戰賽失敗");
-//        response.send("API:60 會員參加挑戰賽失敗");      
-//      } else {
-//        console.log("API:60 會員參加挑戰賽成功");
-//        response.send("API:60 會員參加挑戰賽成功");
-//      }
-//
-//    });
+    database.ref('users/林口運動中心/挑戰賽管理').set({
+      挑戰賽會員: JSON.stringify(challengeMember),
+    }, function (error) {
+      if (error) {
+        console.log("API:60 會員參加挑戰賽失敗");
+        response.send("API:60 會員參加挑戰賽失敗");      
+      } else {
+        console.log("API:60 會員參加挑戰賽成功");
+        response.send("API:60 會員參加挑戰賽成功");
+      }
+
+    });
     
   });    
 }
