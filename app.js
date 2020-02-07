@@ -52,9 +52,13 @@ app.use(function (req, res, next) {
 //
 //   API:40 ?API=40&UserName&CouponId&UserId&PhoneNumber
 //          報名寫入 couponMember with  ["couponID", ["userName", "已使用", "未確認", UserId, PhoneNumber]], 成功回應 "API:40 優惠券使用成功" 或 "API:40 優惠券使用失敗"
+//
 //   API:50 ?API=50&UserId&ExerciseId&DataType&DateStart&DateEnd
 //          取得 UserId 在 DateStart 到 DateEnd 其間 ExerciseId 的 DataType 總運動量
 //          ExerciseId: 00:jogging, 01:biking, 02:Rowing, 03:Weights          
+//   API:60 ?API=60&UserName&ChallengeId&UserId&PhoneNumber&Fee
+//          報名寫入 challengeMember with  ["challengeId", ["userName", "日期 已參加", "未繳費"/或"免費"]], 成功回應 "API:60 挑戰賽參加成功" 或 "API:60 挑戰賽參加失敗"
+
 
 app.get('/', function (req, res) {
   //console.log(req.query);
@@ -845,13 +849,14 @@ function readChallengeMember(){
 }
 
 function writeChallengeMember() {
-// ?API=60&UserName=小李&ChallengeId=T0003&UserId=U12345678901234567890123456789012&PhoneNumber=0917888999  
-  // 檢查 UserName, ChallengeId, UserId, PhoneNumber
+// ?API=60&UserName=小A&ChallengeId=T0003&UserId=U12344678901234567890123456789012&PhoneNumber=0917888999&Fee=free 
+  // 檢查 UserName, ChallengeId, UserId, PhoneNumber, Fee
   var errMsg = "";
-  if ( inputParam.UserName == undefined ||
+  if ( inputParam.UserName    == undefined ||
        inputParam.ChallengeId == undefined ||
-       inputParam.UserId == undefined   ||
-       inputParam.PhoneNumber == undefined )
+       inputParam.UserId      == undefined ||
+       inputParam.PhoneNumber == undefined ||
+       inputParam.Fee         == undefined     )
   {
     console.log("API:60 參數錯誤"); 
     response.send("API:60 參數錯誤");
@@ -915,7 +920,11 @@ function writeChallengeMember() {
     //console.log(dateStr);
     // End of Conver local date to format "YYYY-MM-DD"     
     
-    challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "未繳費", inputParam.UserId, inputParam.PhoneNumber]);
+    if (inputParam.Fee == "free") {
+      challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "免費", inputParam.UserId, inputParam.PhoneNumber]); }
+    else {
+      challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "未繳費", inputParam.UserId, inputParam.PhoneNumber]);       
+    }
     //console.log(challengeMember);
 
     // Write to Database
