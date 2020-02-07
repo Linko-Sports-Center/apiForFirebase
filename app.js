@@ -920,26 +920,26 @@ function writeChallengeMember() {
     //console.log(dateStr);
     // End of Conver local date to format "YYYY-MM-DD"     
     
-    if (inputParam.Fee == "free") {
+    if (inputParam.Fee == "free" || inputParam.Fee == "0") {
       challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "免費", inputParam.UserId, inputParam.PhoneNumber]); }
     else {
       challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "未繳費", inputParam.UserId, inputParam.PhoneNumber]);       
     }
-    //console.log(challengeMember);
+    console.log(challengeMember);
 
     // Write to Database
-    database.ref('users/林口運動中心/挑戰賽管理').set({
-      挑戰賽會員: JSON.stringify(challengeMember),
-    }, function (error) {
-      if (error) {
-        console.log("API:60 會員參加挑戰賽失敗");
-        response.send("API:60 會員參加挑戰賽失敗");      
-      } else {
-        console.log("API:60 會員參加挑戰賽成功");
-        response.send("API:60 會員參加挑戰賽成功");
-      }
-
-    });
+//    database.ref('users/林口運動中心/挑戰賽管理').set({
+//      挑戰賽會員: JSON.stringify(challengeMember),
+//    }, function (error) {
+//      if (error) {
+//        console.log("API:60 會員參加挑戰賽失敗");
+//        response.send("API:60 會員參加挑戰賽失敗");      
+//      } else {
+//        console.log("API:60 會員參加挑戰賽成功");
+//        response.send("API:60 會員參加挑戰賽成功");
+//      }
+//
+//    });
     
   });    
 }
