@@ -48,6 +48,6 @@ APIs <br>
   * API:53 ?API=53 ==> read 挑戰賽管理/挑戰賽會員 --> challengeMember 
     * 讀取 challengeMember, 成功回應 JSON.stringify(challengeMember), 失敗回應 "API:53 challengeMember 讀取失敗"
     <br> 
-  * API:60 ?API=60&UserName&ChallengeId&UserId&PhoneNumber
-    * 報名寫入 challengeMember with  ["challengeId", ["userName", "日期 已參加", "未繳費"]], 成功回應 "API:60 挑戰賽參加成功" 或 "API:60 挑戰賽參加失敗"
+  * API:60 ?API=60&UserName&ChallengeId&UserId&PhoneNumber&Fee
+    * 報名寫入 challengeMember with  ["challengeId", ["userName", "日期 已參加", "未繳費"/或"免費"]], 成功回應 "API:60 挑戰賽參加成功" 或 "API:60 挑戰賽參加失敗"
     <br>    
