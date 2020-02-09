@@ -1,4 +1,4 @@
-var version ="V.6";
+var version ="V1.0";
 
 var express = require('express');
 var request = require("request");
@@ -11,15 +11,15 @@ var memberData = [];
 var courseMember = [];
 var memberAlreadyExist = false;
 
+
+console.log("Version:", version);
+
 // express 設定
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next()
 });
-
-//測試時用 browser 訪問以下 URL
-//http://localhost:5000/?API=01&UserId=U1001&Name=小王&Gender=男&Height=170cm&Birth=2019-01-01&Phone=095555555&ID=A120000000&Address=新竹市 東區 中央路&picUrl=www.google.com
 
 // 處理 API
 //   API:00 ?API=00&UserId=Uxxx..xxx 
@@ -238,7 +238,7 @@ function addMember() {
   });
 }
 
-//?API=01&UserId=U1001&Name=小王&Gender=男&Height=170cm&Birth=2019-01-01&Phone=095555555&ID=A120000000&Address=新竹市 東區 中央路&picURL=www.google.com
+//?API=01&UserId&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
 //會員資料格式
 //[
 //  '盧小宏',
@@ -249,7 +249,10 @@ function addMember() {
 //  '新竹市',
 //  'Tony',// LineId
 //  'www.xxx.com', // Line URL
-//  '175cm'
+//  '175' cm
+//  '70' kg
+//  '緊急連絡人'
+//  '緊急連絡電話'
 //]
 function addAndWriteToFirebase() {
   var dataToAdd =[];
@@ -263,6 +266,9 @@ function addAndWriteToFirebase() {
     inputParam.UserId,    
     inputParam.PicURL, 
     inputParam.Height,
+    inputParam.Weight,
+    inputParam.EmergencyContact,
+    inputParam.EmergencyPhone,     
   ];
 
   memberData.push(dataToAdd);

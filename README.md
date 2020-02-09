@@ -5,7 +5,7 @@ APIs <br>
   * API:00 ?API=00&UserId=Uxxx..xxx 
     * 檢查會員 成功回應 "API:00 會員已存在" 或 "API:00 會員不存在" 
     <br>
-  * API:01 ?API=01&UserId=12345&Name=小王&Gender=男&Birth=2019-01-01&Phone=095555555&ID=A120000000&Address=新竹市 東區 中央路
+  * API:01 ?API=01&UserId&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
     * 加入會員 成功回應 "API:01 會員已存在" 或 "API:01 會員寫入成功"
     <br>
   * API:10 ?API=10
