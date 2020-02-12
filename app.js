@@ -1,4 +1,4 @@
-var version ="V1.0";
+var version ="V1.1";
 
 var express = require('express');
 var request = require("request");
@@ -38,7 +38,10 @@ app.use(function (req, res, next) {
 //          讀取 courseMember, JSON.stringify(courseMember), 失敗回應 "API:12 courseHistory 讀取失敗"
 //
 //   API:13 ?API=13&UserId=U10...CDEF
-//          從 UserId 查得 PhoneNumber
+//          從 UserId 查得 PhoneNumber JSON.stringify(phoneNumber), 失敗 API:13 找不到 inputParam.UserId
+//
+//   API:14 ?API=14&UserId=U10...CDEF
+//          讀取 user profile JSON.stringify(memberData[userId]), 失敗回應 "API:14 單一客戶資料讀取失敗"
 //
 //   API:20 ?API=20&UserName&CourseId&UserId&PhoneNumber
 //          報名寫入 courseMember with  ["courseID", ["userName", "未繳費", "未簽到", UserId, PhoneNumber]], 成功回應 "API:20 會員報名成功" 或 "API:20 會員報名失敗"
@@ -105,6 +108,10 @@ app.get('/', function (req, res) {
     case "13":
       console.log("呼叫 API:13 讀取 courseMember");
       getUserPhoneNUmber();  
+      break;
+    case "14":
+      console.log("呼叫 API:14 讀取 user profile");
+      getUserProfile();  
       break;      
     case "20":
       console.log("呼叫 API:20 報名寫入 courseMember");
@@ -424,6 +431,36 @@ function getUserPhoneNUmber() {
     });
     
     if (!userFound) response.send("API:13 找不到 "+inputParam.UserId); 
+    
+  });  
+}
+
+function getUserProfile(){
+  // 讀取目前會員資料
+  database.ref("users/林口運動中心/客戶管理").once("value").then(function (snapshot) {
+    //console.log(snapshot.val());
+    console.log("資料庫會員資料讀取完成");
+    var result = snapshot.val();
+    
+    try {
+      memberData = JSON.parse(result.會員資料);
+      //console.log(memberData);
+    } catch (e) {
+      console.log("API:14 讀取資料庫失敗");
+      response.send("API:14 讀取資料庫失敗");      
+      return 0;
+    }
+    
+    var userFound=false;
+    memberData.forEach(function(member, index, array){
+     if (member[6] == inputParam.UserId) {
+       response.send(member);
+       userFound = true;
+       return 0;
+     }
+    });
+    
+    if (!userFound) response.send("API:14 找不到 "+inputParam.UserId); 
     
   });  
 }

@@ -20,6 +20,12 @@ APIs <br>
   * API:12 ?API=12
     * 讀取 courseMember, JSON.stringify(courseMember), 失敗回應 "API:12 courseHistory 讀取失敗"
     <br>
+  * API:13 ?API=13&UserId=U10...CDEF
+    * UserId 查得 PhoneNumber, JSON.stringify(memberData[userId]), 失敗回應 "API:13 courseHistory 讀取失敗"
+    <br>
+  * API:14 ?API=14
+    * 讀取 單一客戶資料, JSON.stringify(memberData[userId]), 失敗回應 "API:14 單一客戶資料讀取失敗"
+    <br> 
   * API:20 ?API=20&UserName&CourseId&UserId&PhoneNumber
     * 報名寫入 courseMember with  ["courseID", ["userName", "未繳費", "未簽到"]], 成功回應 "API:20 會員報名成功" 或 "API:20 會員報名失敗"
     <br>
