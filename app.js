@@ -27,6 +27,9 @@ app.use(function (req, res, next) {
 //   API:01 ?API=01&UserId=12345&Name=小王&Gender=男&Birth=2019-01-01&Phone=095555555&ID=A120000000&Address=新竹市 東區 中央路
 //          加入會員 成功回應 "API:01 會員已存在" 或 "API:01 會員寫入成功"
 //
+//   API:02 ?API=02&UserId=12345&Name=小王&Gender=男&Birth=2019-01-01&Phone=095555555&ID=A120000000&Address=新竹市 東區 中央路
+//          更新資料 成功回應 "API:02 更新資料成功" 或 "API:02 更新資料失敗"
+//
 //   API:10 ?API=10
 //          讀取 courseData, 成功回應 JSON.stringify(courseData), 失敗回應 "API:10 courseData 讀取失敗"
 //   API:11 ?API=11
@@ -83,6 +86,10 @@ app.get('/', function (req, res) {
       console.log("呼叫 API:01 加入會員");
       addMember();  
       break; 
+    case "02":
+      console.log("呼叫 API:02 更新資料");
+      updateMember();  
+      break;       
     case "10":
       console.log("呼叫 API:10 讀取 courseData");
       readCourseData();  
@@ -233,12 +240,55 @@ function addMember() {
     } else {
       // 呼叫寫入資料庫涵式
       console.log("API:01 會員不存在，寫入新會員");
-      addAndWriteToFirebase()     
+      
+      // addAndWriteToFirebase(成功訊息，失敗訊息)
+      addAndWriteToFirebase("API:01 會員寫入成功", "API:01 會員寫入失敗");     
     }    
   });
 }
 
-//?API=01&UserId&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
+// 更新會員資料到資料庫
+function updateMember() {
+  // 讀取目前會員資料
+  database.ref("users/林口運動中心/客戶管理").once("value").then(function (snapshot) {
+    //console.log(snapshot.val());
+    console.log("資料庫會員資料讀取完成");
+    var result = snapshot.val();
+    
+    try {
+      memberData = JSON.parse(result.會員資料);
+      //console.log(memberData);
+    } catch (e) {
+      console.log("API:02 讀取資料庫失敗");
+      response.send("API:02 讀取資料庫失敗");      
+      return 0;
+    }
+    
+    // 檢查是否有相同的名字及 LineId
+    var memberIdex=-1;
+    memberAlreadyExist = false;
+    memberData.forEach(function(member, index, array){
+     if (member[6] == inputParam.UserId) {
+       memberAlreadyExist = true;
+       memberIdex = index;
+     }
+    });   
+    
+    if (memberAlreadyExist) {
+      console.log("API:02 會員存在，更新資料");
+      // 刪除 舊會員
+      console.log(memberIdex);
+      memberData.splice(memberIdex,1);
+      console.log(memberData);
+      // 新增 新會員
+      addAndWriteToFirebase("API:02 資料更新成功", "API:02 資料更新失敗");
+    } else {
+      response.send("API:02 會員不存在");
+    }    
+  });
+}
+
+//?API=01&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
 //會員資料格式
 //[
 //  '盧小宏',
@@ -254,7 +304,7 @@ function addMember() {
 //  '緊急連絡人'
 //  '緊急連絡電話'
 //]
-function addAndWriteToFirebase() {
+function addAndWriteToFirebase(成功訊息, 失敗訊息) {
   var dataToAdd =[];
   dataToAdd = [
     inputParam.Name,
@@ -273,17 +323,17 @@ function addAndWriteToFirebase() {
 
   memberData.push(dataToAdd);
 
-  console.log(memberData[memberData.length-1]);
-  
+  console.log(memberData);
+    
   database.ref('users/林口運動中心/客戶管理').set({
     會員資料: JSON.stringify(memberData),
   }, function (error) {
     if (error) {
-      console.log("API:01 會員寫入失敗");
-      response.send("API:01 會員寫入失敗");      
+      console.log(失敗訊息);
+      response.send(失敗訊息);      
     } else {
-      console.log("API:01 會員寫入成功");
-      response.send("API:01 會員寫入成功");
+      console.log(成功訊息);
+      response.send(成功訊息);
     }
 
   });

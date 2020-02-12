@@ -5,8 +5,11 @@ APIs <br>
   * API:00 ?API=00&UserId=Uxxx..xxx 
     * 檢查會員 成功回應 "API:00 會員已存在" 或 "API:00 會員不存在" 
     <br>
-  * API:01 ?API=01&UserId&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
+  * API:01 ?API=01&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
     * 加入會員 成功回應 "API:01 會員已存在" 或 "API:01 會員寫入成功"
+    <br>
+  * API:02 ?API=02&Name&Gender&Birth&Phone&ID&Address&UserId&PicURL&Height&Weight&EmergencyContact&EmergencyPhone
+    * 更新資料 成功回應 "API:02 更新資料成功" 或 "API:02 更新資料失敗" 
     <br>
   * API:10 ?API=10
     * 讀取 courseData, 成功回應 JSON.stringify(courseData), 失敗回應 "API:10 courseData 讀取失敗"
