@@ -778,7 +778,10 @@ function writeCouponMember() {
     console.log(couponIndex);
     // CouponId 還沒被 UserName 使用過
     // push to courseMember    
-    couponMember[couponIndex].push([inputParam.UserName, "已使用", "未確認", inputParam.UserId, inputParam.PhoneNumber]);
+    // 加上使用日期
+    var useDate = new Date()
+    var useDateLocal = useDate.toLocaleDateString();
+    couponMember[couponIndex].push([inputParam.UserName, useDateLocal+" 已使用", "未確認", inputParam.UserId, inputParam.PhoneNumber]);
     //console.log(couponMember);
 
     // Write to Database
