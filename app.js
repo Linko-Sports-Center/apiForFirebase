@@ -988,7 +988,7 @@ function writeChallengeMember報名() {
         if (challenge.length>1) {
           for (var i=1; i< challenge.length; i++) {
             //console.log(i, challenge[i]);
-            if (challenge[i][4]== inputParam.PhoneNumber){
+            if (challenge[i][3]== inputParam.UserId){
               //console.log(inputParam.UserName, "已經報名過 ", inputParam.ChallengeId);
               //response.send("API:60 "+inputParam.UserName+" 已經報名過 "+inputParam.ChallengeId);   
               userInchallenge = true;
