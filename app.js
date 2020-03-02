@@ -949,7 +949,7 @@ function readChallengeMember(){
 }
 
 function writeChallengeMember報名() {
-// ?API=60&UserName=小A&ChallengeId=T0003&UserId=U12344678901234567890123456789012&PhoneNumber=0917888999&Fee=free 
+  //?API=61&UserName=小華&ChallengeId=T0003&UserId=U722be0c9c9d36e011c0e556bd2047819&PhoneNumber=09XXXXX333&Fee=free 
   // 檢查 UserName, ChallengeId, UserId, PhoneNumber, Fee
   var errMsg = "";
   if ( inputParam.UserName    == undefined ||
@@ -1045,7 +1045,7 @@ function writeChallengeMember報名() {
 }
 
 function writeChallengeMember兌換() {
-// ?API=61&UserName=小A&ChallengeId=T0003&UserId=U12344678901234567890123456789012&PhoneNumber=0917888999&Fee=free 
+  //?API=61&UserName=小華&ChallengeId=T0003&UserId=U722be0c9c9d36e011c0e556bd2047819&PhoneNumber=09XXXXX333&Fee=free 
   // 檢查 UserName, ChallengeId, UserId, PhoneNumber, Fee
   var errMsg = "";
   if ( inputParam.UserName    == undefined ||
@@ -1076,6 +1076,7 @@ function writeChallengeMember兌換() {
     }
     
     var challengeIndex=-1;
+    var memberIndex=-1;
     var userInChallenge = false;
     challengeMember.forEach(function(challenge, index, array){
       if (challenge[0]==inputParam.ChallengeId){
@@ -1084,10 +1085,11 @@ function writeChallengeMember兌換() {
         if (challenge.length>1) {
           for (var i=1; i< challenge.length; i++) {
             //console.log(i, challenge[i]);
-            if (challenge[i][4]== inputParam.PhoneNumber){
+            if (challenge[i][3]== inputParam.UserId){
               //console.log(inputParam.UserName, "已經報名過 ", inputParam.ChallengeId);
               //response.send("API:60 "+inputParam.UserName+" 已經報名過 "+inputParam.ChallengeId);   
               userInchallenge = true;
+              memberIndex = i;
               break;
             }
           }
@@ -1095,13 +1097,13 @@ function writeChallengeMember兌換() {
       }
     });
 
-//    if (userInChallenge) {
-//      console.log("API:61", inputParam.UserName, "已參加過 ", inputParam.ChallengeId);
-//      response.send("API:61 "+inputParam.UserName+" 已參加過 "+inputParam.ChallengeId); 
-//      return 0;
-//    };
+    //console.log(challengeMember[challengeIndex][0]);
+    //console.log(challengeMember[challengeIndex][memberIndex][2]);
+    challengeMember[challengeIndex][memberIndex][2]="已兌換";
+    //console.log(challengeMember[challengeIndex][memberIndex][2]);
+  
     
-    console.log(challengeIndex);
+    
     // ChallengeId 還沒被 UserName 使用過
     // push to challengeMember    
 
@@ -1124,21 +1126,21 @@ function writeChallengeMember兌換() {
     
     
     
-    console.log(challengeMember);
+    //console.log(challengeMember);
 
     // Write to Database
-//    database.ref('users/林口運動中心/挑戰賽管理').set({
-//      挑戰賽會員: JSON.stringify(challengeMember),
-//    }, function (error) {
-//      if (error) {
-//        console.log("API:61 會員挑戰賽兌換失敗");
-//        response.send("API:61 會員挑戰賽兌換失敗");      
-//      } else {
-//        console.log("API:61 會員挑戰賽兌換成功");
-//        response.send("API:61 會員挑戰賽兌換成功");
-//      }
-//
-//    });
+    database.ref('users/林口運動中心/挑戰賽管理').set({
+      挑戰賽會員: JSON.stringify(challengeMember),
+    }, function (error) {
+      if (error) {
+        console.log("API:61 會員挑戰賽兌換失敗");
+        response.send("API:61 會員挑戰賽兌換失敗");      
+      } else {
+        console.log("API:61 會員挑戰賽兌換成功");
+        response.send("API:61 會員挑戰賽兌換成功");
+      }
+
+    });
     
   });    
 }
