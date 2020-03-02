@@ -154,8 +154,12 @@ app.get('/', function (req, res) {
       readChallengeMember();  
       break;  
     case "60":
-      console.log("呼叫 API:60 使用寫入 challengeMember");
-      writeChallengeMember();  
+      console.log("呼叫 API:60 報名寫入 challengeMember");
+      writeChallengeMember報名();  
+      break;  
+    case "61":
+      console.log("呼叫 API:61 兌換寫入 challengeMember");
+      writeChallengeMember兌換();  
       break;      
     default:
       console.log("呼叫 未知API:"+inputParam.API);
@@ -944,7 +948,7 @@ function readChallengeMember(){
   });  
 }
 
-function writeChallengeMember() {
+function writeChallengeMember報名() {
 // ?API=60&UserName=小A&ChallengeId=T0003&UserId=U12344678901234567890123456789012&PhoneNumber=0917888999&Fee=free 
   // 檢查 UserName, ChallengeId, UserId, PhoneNumber, Fee
   var errMsg = "";
@@ -1036,6 +1040,105 @@ function writeChallengeMember() {
       }
 
     });
+    
+  });    
+}
+
+function writeChallengeMember兌換() {
+// ?API=61&UserName=小A&ChallengeId=T0003&UserId=U12344678901234567890123456789012&PhoneNumber=0917888999&Fee=free 
+  // 檢查 UserName, ChallengeId, UserId, PhoneNumber, Fee
+  var errMsg = "";
+  if ( inputParam.UserName    == undefined ||
+       inputParam.ChallengeId == undefined ||
+       inputParam.UserId      == undefined ||
+       inputParam.PhoneNumber == undefined ||
+       inputParam.Fee         == undefined     )
+  {
+    console.log("API:61 參數錯誤"); 
+    response.send("API:61 參數錯誤");
+    return 1;
+  }   
+  // ====================================================================================
+  
+  // 讀取目前 couponMember
+  database.ref("users/林口運動中心/挑戰賽管理").once("value").then(function (snapshot) {
+    console.log("API:61 challengeMember 讀取成功");
+    var result = snapshot.val();
+    //console.log(result);
+    try {      
+      challengeMember=[];
+      challengeMember = JSON.parse(result.挑戰賽會員);
+      //console.log(couponMember);   
+    } catch (e) {
+      console.log("API:61 challengeMember 讀取失敗");
+      response.send("API:61 challengeMember 讀取失敗");      
+      return 0;
+    }
+    
+    var challengeIndex=-1;
+    var userInChallenge = false;
+    challengeMember.forEach(function(challenge, index, array){
+      if (challenge[0]==inputParam.ChallengeId){
+        //console.log("challenge matched:", challenge[0]);
+        challengeIndex = index;
+        if (challenge.length>1) {
+          for (var i=1; i< challenge.length; i++) {
+            //console.log(i, challenge[i]);
+            if (challenge[i][4]== inputParam.PhoneNumber){
+              //console.log(inputParam.UserName, "已經報名過 ", inputParam.ChallengeId);
+              //response.send("API:60 "+inputParam.UserName+" 已經報名過 "+inputParam.ChallengeId);   
+              userInchallenge = true;
+              break;
+            }
+          }
+        }
+      }
+    });
+
+//    if (userInChallenge) {
+//      console.log("API:61", inputParam.UserName, "已參加過 ", inputParam.ChallengeId);
+//      response.send("API:61 "+inputParam.UserName+" 已參加過 "+inputParam.ChallengeId); 
+//      return 0;
+//    };
+    
+    console.log(challengeIndex);
+    // ChallengeId 還沒被 UserName 使用過
+    // push to challengeMember    
+
+    // Conver local date to format "YYYY-MM-DD"
+//    var nowDate = new Date();
+//    var localDateStr = nowDate.toLocaleDateString();
+//    var formatDateStr = localDateStr.replace(/\//g, "-");
+//    var dateArr = formatDateStr.split("-");
+//    if (dateArr[1].length == 1) dateArr[1]="0"+dateArr[1]; //若是個位數，前面補 0
+//    if (dateArr[2].length == 1) dateArr[2]="0"+dateArr[2]; //若是個位數，前面補 0   
+//    var dateStr = dateArr[0] + "-" + dateArr[1] + "-" + dateArr[2];   
+    //console.log(dateStr);
+    // End of Conver local date to format "YYYY-MM-DD"     
+    
+//    if (inputParam.Fee == "free" || inputParam.Fee == "0") {
+//      challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "免費", inputParam.UserId, inputParam.PhoneNumber]); }
+//    else {
+//      challengeMember[challengeIndex].push([inputParam.UserName, dateStr+" 已參加", "未繳費", inputParam.UserId, inputParam.PhoneNumber]);       
+//    }
+    
+    
+    
+    console.log(challengeMember);
+
+    // Write to Database
+//    database.ref('users/林口運動中心/挑戰賽管理').set({
+//      挑戰賽會員: JSON.stringify(challengeMember),
+//    }, function (error) {
+//      if (error) {
+//        console.log("API:61 會員挑戰賽兌換失敗");
+//        response.send("API:61 會員挑戰賽兌換失敗");      
+//      } else {
+//        console.log("API:61 會員挑戰賽兌換成功");
+//        response.send("API:61 會員挑戰賽兌換成功");
+//      }
+//
+//    });
     
   });    
 }
